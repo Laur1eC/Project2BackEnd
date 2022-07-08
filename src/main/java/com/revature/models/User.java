@@ -25,4 +25,10 @@ public class User {
     private String firstName;
     @Column
     private String lastName;
+    @Column
+    private Role role;
+    public enum Role{
+        Admin,
+        User
+    }
 }

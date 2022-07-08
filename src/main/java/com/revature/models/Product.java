@@ -29,5 +29,5 @@ public class Product {
     @Column
     private boolean featured;
     @Column
-    private double sale;
+    private Double sale;
 }
