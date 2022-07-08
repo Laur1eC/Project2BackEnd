@@ -93,4 +93,16 @@ public class ProductController {
 
         return ResponseEntity.ok(optional.get());
     }
+
+    @Authorized
+    @GetMapping("/featured")
+    public ResponseEntity<List<Product>> getFeaturedProducts(@RequestBody boolean f) {
+        return ResponseEntity.ok(productService.getFeaturedProducts(f));
+    }
+
+    @Authorized
+    @GetMapping("/sale")
+    public ResponseEntity<List<Product>> getProductsOnSale() {
+        return ResponseEntity.ok(productService.getProductsOnSale());
+    }
 }
