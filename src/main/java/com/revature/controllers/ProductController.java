@@ -101,8 +101,8 @@ public class ProductController {
 
     @Authorized
     @GetMapping("/featured")
-    public ResponseEntity<List<Product>> getFeaturedProducts(@RequestBody boolean f) {
-        return ResponseEntity.ok(productService.getFeaturedProducts(f));
+    public ResponseEntity<List<Product>> getFeaturedProducts() {
+        return ResponseEntity.ok(productService.getFeaturedProducts());
     }
 
     @Authorized
