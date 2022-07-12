@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 @Transactional
 public interface ProductRepository extends JpaRepository<Product, Integer> {
-
     @Query("FROM Product WHERE featured = 'true'")
     List<Product> getFeaturedProducts(boolean f);
 
