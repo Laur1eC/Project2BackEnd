@@ -87,11 +87,19 @@ public class ProductService {
         Product product = optional.get();
         if(product != null) {
             final DecimalFormat df = new DecimalFormat("0.00");
-            double newSale = (100 - updatedProduct.getSale())/100;
+            double sale = 0;
+            if(updatedProduct.getSale() > 99)
+                sale = 99;
+            if(updatedProduct.getSale() < 0)
+                sale = 0;
+            if(updatedProduct.getSale() >= 0 && updatedProduct.getSale() <= 99)
+                sale = updatedProduct.getSale();
+            double newSale = (100 - sale)/100;
             double oldSale = (100 - product.getSale())/100;
             double oldPrice = product.getPrice()/oldSale;
             double newPrice = Double.parseDouble(df.format(oldPrice*newSale));
             updatedProduct.setPrice(newPrice);
+            updatedProduct.setSale(sale);
             productRepository.save(updatedProduct);
         }
 
