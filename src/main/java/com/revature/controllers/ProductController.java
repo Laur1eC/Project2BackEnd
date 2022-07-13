@@ -110,4 +110,10 @@ public class ProductController {
     public ResponseEntity<List<Product>> getProductsOnSale() {
         return ResponseEntity.ok(productService.getProductsOnSale());
     }
+
+    @Authorized
+    @GetMapping("/overZero")
+    public ResponseEntity<List<Product>> getProductsOverZero() {
+        return ResponseEntity.ok(productService.getProductsOverZero());
+    }
 }

@@ -2,6 +2,7 @@ package com.revature;
 
 import com.revature.models.User;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.Assert.assertEquals;
@@ -11,8 +12,13 @@ import org.springframework.http.MediaType;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @SpringBootTest
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ECommerceApplication.class)
+
 class ECommerceApplicationTests {
 
 	private static final String API_ROOT = "https://onlycorn.azurewebsites.net/";
@@ -77,6 +83,12 @@ class ECommerceApplicationTests {
 	// - (GET) /{id} should return product with that ID
 
 	// - (GET) /featured should return products that are featured
+	@Test public void whenGetAllFeaturedProductsLoggedIn_thenOK() {
+		final User user = getExistingUser();
+		Response logInResponse = logIn(user);
+		final Response response = RestAssured.get(API_ROOT + "/api/product/featured");
+		assertEquals(HttpStatus.OK.value(), logInResponse.getStatusCode(), response.getStatusCode());
+	}
 
 	// - (GET) /sale should return product that are on sale
 

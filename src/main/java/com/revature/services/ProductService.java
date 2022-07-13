@@ -44,4 +44,6 @@ public class ProductService {
     public List<Product> getProductsOnSale() {
         return productRepository.getProductsOnSale();
     }
+
+    public List<Product> getProductsOverZero() {return productRepository.getProductsOverZero();}
 }
