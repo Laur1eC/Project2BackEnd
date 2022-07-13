@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -140,10 +141,10 @@ public class ProductController {
 
     @Authorized
     @PostMapping("/sale")
-    public ResponseEntity<String> updateSale(@RequestBody Product product, HttpSession session) {
+    public ResponseEntity<String> updateSale(@RequestBody Map<String, Object> dto, HttpSession session) {
         User u= (User) session.getAttribute("user");
         if(u.getRole().toString()=="Admin") {
-            productService.updateSale(product);
+            productService.updateSale(dto);
         }
         else {
             return ResponseEntity.ok("Must be logged in as Admin to perform this action");
@@ -155,5 +156,10 @@ public class ProductController {
     @GetMapping("/sale")
     public ResponseEntity<List<Product>> getProductsOnSale() {
         return ResponseEntity.ok(productService.getProductsOnSale());
+    }
+    @Authorized
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getProductsOverZero() {
+        return ResponseEntity.ok(productService.getProductsOverZero());
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -82,30 +83,34 @@ public class ProductService {
     public List<Product> getFeaturedProducts() {
         return productRepository.getFeaturedProducts(true);
     }
-    public Product updateSale(Product updatedProduct){
-        Optional<Product> optional = productRepository.findById(updatedProduct.getId());
+    public Product updateSale(Map<String, Object> dto){
+
+        Optional<Product> optional = productRepository.findById(Integer.parseInt(dto.get("id").toString()));
         Product product = optional.get();
         if(product != null) {
             final DecimalFormat df = new DecimalFormat("0.00");
             double sale = 0;
-            if(updatedProduct.getSale() > 99)
+            if(Double.parseDouble(dto.get("sale").toString()) > 99)
                 sale = 99;
-            if(updatedProduct.getSale() < 0)
+            if(Double.parseDouble(dto.get("sale").toString()) < 0)
                 sale = 0;
-            if(updatedProduct.getSale() >= 0 && updatedProduct.getSale() <= 99)
-                sale = updatedProduct.getSale();
+            if(Double.parseDouble(dto.get("sale").toString()) >= 0 && Double.parseDouble(dto.get("sale").toString()) <= 99)
+                sale = Double.parseDouble(dto.get("sale").toString());
             double newSale = (100 - sale)/100;
             double oldSale = (100 - product.getSale())/100;
             double oldPrice = product.getPrice()/oldSale;
             double newPrice = Double.parseDouble(df.format(oldPrice*newSale));
-            updatedProduct.setPrice(newPrice);
-            updatedProduct.setSale(sale);
-            productRepository.save(updatedProduct);
+            product.setPrice(newPrice);
+            product.setSale(sale);
+            productRepository.save(product);
         }
 
-        return updatedProduct;
+        return product;
     }
     public List<Product> getProductsOnSale() {
         return productRepository.getProductsOnSale();
+    }
+    public List<Product> getProductsOverZero() {
+        return productRepository.getProductsOverZero();
     }
 }
