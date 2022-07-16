@@ -44,7 +44,7 @@ public class ProductController {
 
     @Authorized
     @PostMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable("id") int id, @RequestBody Product product, HttpSession httpsession){
+    public ResponseEntity<Product> updateProduct(@PathVariable("id") int id, @RequestBody Product product, HttpSession httpsession){
         User u=(User) httpsession.getAttribute("user");
         Optional<Product> p= productService.findById(id);
         if(u.getRole().toString()=="Admin"&&p!=null){
