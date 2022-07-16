@@ -47,6 +47,8 @@ public class ProductController {
     public ResponseEntity<Product> upsert(@RequestBody Product product, HttpSession session) {
         User u= (User) session.getAttribute("user");
         if(u.getRole().toString()=="Admin") {
+            product.setSale(0.00);
+            product.setFeatured(false);
             return ResponseEntity.ok(productService.save(product));
         }
         else{
