@@ -43,6 +43,22 @@ public class ProductController {
     }
 
     @Authorized
+    @PostMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable("id") int id, @RequestBody Product product, HttpSession httpsession){
+        User u=(User) httpsession.getAttribute("user");
+        Optional<Product> p= productService.findById(id);
+        if(u.getRole().toString()=="Admin"&&p!=null){
+            product.setId(id);
+            product.setSale(p.get().getSale());
+            product.setFeatured(p.get().isFeatured());
+            return ResponseEntity.ok(productService.save(product));
+
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Authorized
     @PutMapping
     public ResponseEntity<Product> upsert(@RequestBody Product product, HttpSession session) {
         User u= (User) session.getAttribute("user");
