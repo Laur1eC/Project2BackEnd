@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+
 @Transactional
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
@@ -17,4 +19,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("FROM Product WHERE quantity > 0")
     List<Product> getProductsOverZero();
+
+    @Query("FROM Product WHERE id = :id")
+    Optional<Product> findById(int id);
 }
