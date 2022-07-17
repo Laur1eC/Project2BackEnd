@@ -40,7 +40,4 @@ public class ECommerceProductServiceTests {
         Optional<Product> returnedProduct =productService.findById(1);
         assertTrue(returnedProduct.get().equals(mockProduct));
     }
-
-    public static class ECommerceUserServiceTests {
-    }
 }
