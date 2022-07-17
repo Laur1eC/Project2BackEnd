@@ -1,27 +1,52 @@
 package com.revature;
 
+import com.revature.models.Product;
 import com.revature.models.User;
+
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
 
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ECommerceApplication.class)
 
+// TED NOTES
+// Session attribute
+// Test service methods called from the controller
+// https://www.baeldung.com/karate-rest-api-testing
+
+
+// APPLICATION TESTS (aka controller tests)
+// These tests should only check if the controller endpoints return an OK response (for now)
+
 class ECommerceApplicationTests {
 
 	private static final String API_ROOT = "https://onlycorn.azurewebsites.net/";
+
+	private Product getExistingProduct(){
+		Product product = new Product();
+		product.setId(1);
+		product.setQuantity(25);
+		product.setPrice(19.99);
+		product.setDescription("test product");
+		product.setImage("random pic");
+		product.setName("Test");
+		product.setFeatured(true);
+		product.setSale(25.0);
+		return product;
+	}
 
 	private User getExistingUser() {
 		// Since there is not an endpoint for getting user info. This user should already be in the database already.
@@ -60,12 +85,6 @@ class ECommerceApplicationTests {
 		assertEquals(HttpStatus.BAD_REQUEST.value(), logInResponse.getStatusCode()); //400
 	}
 
-	// - Session tests? Possibly integrate into login tests.
-
-	// - (POST) /register should create a new user if user does not already exist
-
-	// - (POST) /register should NOT create a new user if user already exists
-
 	// PRODUCT TESTS =====================================================================
 
 	@Test public void whenGetAllProductsNotLoggedIn_thenUNAUTHORIZED() {
@@ -80,9 +99,16 @@ class ECommerceApplicationTests {
 		assertEquals(HttpStatus.OK.value(), logInResponse.getStatusCode(), response.getStatusCode());
 	}
 
-	// - (GET) /{id} should return product with that ID
+	@Test public void whenGetProductByID_thenOK() {
+		final User user = getExistingUser();
+		Response logInResponse = logIn(user);
 
-	// - (GET) /featured should return products that are featured
+		final Product product = getExistingProduct();
+		final Response response = RestAssured.get(API_ROOT + "/api/product/" + product.getId());
+
+		assertEquals(HttpStatus.OK.value(), logInResponse.getStatusCode(), response.getStatusCode());
+	}
+
 	@Test public void whenGetAllFeaturedProductsLoggedIn_thenOK() {
 		final User user = getExistingUser();
 		Response logInResponse = logIn(user);
@@ -90,11 +116,6 @@ class ECommerceApplicationTests {
 		assertEquals(HttpStatus.OK.value(), logInResponse.getStatusCode(), response.getStatusCode());
 	}
 
-	// - (GET) /sale should return product that are on sale
-
-	// - (PUT) / should update existing product with given product
-
-	// Purchase test?
 
 	// ===================================================================================
 	private Response logIn(User user) {
@@ -104,9 +125,6 @@ class ECommerceApplicationTests {
 				.body(user)
 				.post(API_ROOT + "/auth/login");
 		return response;
-
-		//response.jsonPath().get("id")
-		//
 	}
 
 }
