@@ -61,18 +61,17 @@ public class ProductController {
 
     @Authorized
     @PutMapping
-    public ResponseEntity<String> upsert(@RequestBody Product product, HttpSession session) {
+    public ResponseEntity<Product> upsert(@RequestBody Product product, HttpSession session) {
         User u= (User) session.getAttribute("user");
         if(u.getRole().toString()=="Admin") {
             productService.save(product);
-            return ResponseEntity.ok("The product is added");
             product.setSale(0.00);
             product.setFeatured(false);
             return ResponseEntity.ok(productService.save(product));
 
         }
         else{
-            return ResponseEntity.ok("Must be logged in as Admin to perform this action");
+            return ResponseEntity.notFound().build();
         }
     }
     @Authorized
