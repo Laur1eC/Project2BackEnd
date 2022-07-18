@@ -44,12 +44,32 @@ public class ProductController {
     }
 
     @Authorized
+    @PostMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable("id") int id, @RequestBody Product product, HttpSession httpsession){
+        User u=(User) httpsession.getAttribute("user");
+        Optional<Product> p= productService.findById(id);
+        if(u.getRole().toString()=="Admin"&&p!=null){
+            product.setId(id);
+            product.setSale(p.get().getSale());
+            product.setFeatured(p.get().isFeatured());
+            return ResponseEntity.ok(productService.save(product));
+
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Authorized
     @PutMapping
     public ResponseEntity<String> upsert(@RequestBody Product product, HttpSession session) {
         User u= (User) session.getAttribute("user");
         if(u.getRole().toString()=="Admin") {
             productService.save(product);
             return ResponseEntity.ok("The product is added");
+            product.setSale(0.00);
+            product.setFeatured(false);
+            return ResponseEntity.ok(productService.save(product));
+
         }
         else{
             return ResponseEntity.ok("Must be logged in as Admin to perform this action");
@@ -150,6 +170,7 @@ public class ProductController {
             return ResponseEntity.ok("Must be logged in as Admin to perform this action");
         }
         return ResponseEntity.ok("The sale is updated");
+
     }
 
     @Authorized
@@ -157,8 +178,9 @@ public class ProductController {
     public ResponseEntity<List<Product>> getProductsOnSale() {
         return ResponseEntity.ok(productService.getProductsOnSale());
     }
+
     @Authorized
-    @GetMapping("/products")
+    @GetMapping("/overZero")
     public ResponseEntity<List<Product>> getProductsOverZero() {
         return ResponseEntity.ok(productService.getProductsOverZero());
     }

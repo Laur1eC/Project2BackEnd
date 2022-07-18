@@ -47,22 +47,27 @@ public class ProductService {
     }
 
     public void delete(int id) {
-        productRepository.deleteById(id);
+        if(productRepository.existsById(id)){
+            productRepository.deleteById(id);
+        } else {
+            System.out.println("Product with that ID does not exist.");
+        }
     }
     public String addProductToFeaturedList(int id){
         Optional<Product> optional = productRepository.findById(id);
         Product product = optional.get();
         if(product != null) {
-
-        if(product.isFeatured() == true){
-            return "This product is already in the featured list";
-        }
-        if(product.isFeatured() == false){
-            product.setFeatured(true);
-            productRepository.save(product);
-            return "The product is added the the featured list";
-        }}
+          if(product.isFeatured() == true){
+              return "This product is already in the featured list";
+          }
+          if(product.isFeatured() == false){
+              product.setFeatured(true);
+              productRepository.save(product);
+              return "The product is added the the featured list";
+          }
+       }
             return "Something went wrong, please check your request";
+
     }
     public String deleteProductToFeaturedList(int id){
         Optional<Product> optional = productRepository.findById(id);
