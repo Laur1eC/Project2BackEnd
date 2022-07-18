@@ -86,7 +86,7 @@ public class ProductService {
     }
 
     public List<Product> getFeaturedProducts() {
-        return productRepository.getFeaturedProducts(true);
+        return productRepository.getFeaturedProducts();
     }
     public Product updateSale(Map<String, Object> dto){
 
