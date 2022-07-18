@@ -44,7 +44,7 @@ public class ProductController {
     }
 
     @Authorized
-    @PostMapping("/{id}")
+    @PutMapping("/{id}") // PUT - Updates a product by ID
     public ResponseEntity<Product> updateProduct(@PathVariable("id") int id, @RequestBody Product product, HttpSession httpsession){
         User u=(User) httpsession.getAttribute("user");
         Optional<Product> p= productService.findById(id);
@@ -60,7 +60,7 @@ public class ProductController {
     }
 
     @Authorized
-    @PutMapping
+    @PostMapping // POST - Creates a new product
     public ResponseEntity<Product> upsert(@RequestBody Product product, HttpSession session) {
         User u= (User) session.getAttribute("user");
         if(u.getRole().toString()=="Admin") {
@@ -72,17 +72,6 @@ public class ProductController {
         }
         else{
             return ResponseEntity.notFound().build();
-        }
-    }
-    @Authorized
-    @PostMapping
-    public ResponseEntity<String> update(@RequestBody Product product, HttpSession session) {
-        User u= (User) session.getAttribute("user");
-        if(u.getRole().toString()=="Admin") {
-            return ResponseEntity.ok(productService.update(product));
-        }
-        else{
-            return ResponseEntity.ok("Must be logged in as Admin to perform this action");
         }
     }
 
@@ -130,7 +119,7 @@ public class ProductController {
         return ResponseEntity.ok("Product is deleted");
     }
     @Authorized
-    @PutMapping("/featured/{id}")
+    @PutMapping("/featured/{id}") // Updates product status to be featured - by product ID
     public ResponseEntity<String> addFeaturedProduct(@PathVariable("id") int id, HttpSession session) {
         User u= (User) session.getAttribute("user");
         if(u.getRole().toString()=="Admin") {
@@ -141,7 +130,7 @@ public class ProductController {
         }
     }
     @Authorized
-    @DeleteMapping("/featured/{id}")
+    @DeleteMapping("/featured/{id}") // Updates product status to be NOT featured - by product ID
     public ResponseEntity<String> deleteFeaturedProduct(@PathVariable("id") int id, HttpSession session) {
         User u= (User) session.getAttribute("user");
         if(u.getRole().toString()=="Admin") {
@@ -179,7 +168,7 @@ public class ProductController {
     }
 
     @Authorized
-    @GetMapping("/overZero")
+    @GetMapping("/stocked") // Returns products that are currently in stock (quantity over zero)
     public ResponseEntity<List<Product>> getProductsOverZero() {
         return ResponseEntity.ok(productService.getProductsOverZero());
     }
