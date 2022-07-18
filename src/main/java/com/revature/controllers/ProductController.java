@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -60,15 +61,29 @@ public class ProductController {
 
     @Authorized
     @PutMapping
-    public ResponseEntity<Product> upsert(@RequestBody Product product, HttpSession session) {
+    public ResponseEntity<String> upsert(@RequestBody Product product, HttpSession session) {
         User u= (User) session.getAttribute("user");
         if(u.getRole().toString()=="Admin") {
+            productService.save(product);
+            return ResponseEntity.ok("The product is added");
             product.setSale(0.00);
             product.setFeatured(false);
             return ResponseEntity.ok(productService.save(product));
+
         }
         else{
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok("Must be logged in as Admin to perform this action");
+        }
+    }
+    @Authorized
+    @PostMapping
+    public ResponseEntity<String> update(@RequestBody Product product, HttpSession session) {
+        User u= (User) session.getAttribute("user");
+        if(u.getRole().toString()=="Admin") {
+            return ResponseEntity.ok(productService.update(product));
+        }
+        else{
+            return ResponseEntity.ok("Must be logged in as Admin to perform this action");
         }
     }
 
@@ -101,26 +116,61 @@ public class ProductController {
 
     @Authorized
     @DeleteMapping("/{id}")
-    public ResponseEntity<Product> deleteProduct(@PathVariable("id") int id, HttpSession session) {
+    public ResponseEntity<String> deleteProduct(@PathVariable("id") int id, HttpSession session) {
         Optional<Product> optional = productService.findById(id);
         User u= (User) session.getAttribute("user");
-        if (u.getRole().toString()=="Admin") {
-            if (!optional.isPresent()) {
-                return ResponseEntity.notFound().build();
-            }
-            productService.delete(id);
-
-            return ResponseEntity.ok(optional.get());
-        }
-        else{
+        if(!optional.isPresent()) {
             return ResponseEntity.notFound().build();
         }
+        if(u.getRole().toString()=="Admin") {
+        productService.delete(id);
+        }
+        else{
+            return ResponseEntity.ok("Must be logged in as Admin to perform this action");
+        }
+        return ResponseEntity.ok("Product is deleted");
     }
-
+    @Authorized
+    @PutMapping("/featured/{id}")
+    public ResponseEntity<String> addFeaturedProduct(@PathVariable("id") int id, HttpSession session) {
+        User u= (User) session.getAttribute("user");
+        if(u.getRole().toString()=="Admin") {
+            return ResponseEntity.ok(productService.addProductToFeaturedList(id));
+        }
+        else{
+            return ResponseEntity.ok("Must be logged in as Admin to perform this action");
+        }
+    }
+    @Authorized
+    @DeleteMapping("/featured/{id}")
+    public ResponseEntity<String> deleteFeaturedProduct(@PathVariable("id") int id, HttpSession session) {
+        User u= (User) session.getAttribute("user");
+        if(u.getRole().toString()=="Admin") {
+            return ResponseEntity.ok(productService.deleteProductToFeaturedList(id));
+        }
+        else{
+            //return ResponseEntity.notFound().build();
+            return ResponseEntity.ok("Must be logged in as Admin to perform this action");
+        }
+    }
     @Authorized
     @GetMapping("/featured")
     public ResponseEntity<List<Product>> getFeaturedProducts() {
         return ResponseEntity.ok(productService.getFeaturedProducts());
+    }
+
+    @Authorized
+    @PostMapping("/sale")
+    public ResponseEntity<String> updateSale(@RequestBody Map<String, Object> dto, HttpSession session) {
+        User u= (User) session.getAttribute("user");
+        if(u.getRole().toString()=="Admin") {
+            productService.updateSale(dto);
+        }
+        else {
+            return ResponseEntity.ok("Must be logged in as Admin to perform this action");
+        }
+        return ResponseEntity.ok("The sale is updated");
+
     }
 
     @Authorized

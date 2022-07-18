@@ -18,4 +18,11 @@ public class RestExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorMessage);
     }
+    /*** @ExceptionHandler(InvalidRoleException.class)
+    public ResponseEntity<Object> handleInvalidRoleException(HttpServletRequest request, InvalidRoleException invalidRoleException) {
+
+        String errorMessage = "Must be logged in as Admin to perform this action";
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorMessage);
+    } ***/
 }
