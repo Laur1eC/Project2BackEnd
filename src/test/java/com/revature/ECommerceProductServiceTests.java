@@ -41,11 +41,11 @@ public class ECommerceProductServiceTests {
     }
 
     @Test void whenIdExists_findByIdReturnsProduct(){
-        //findById only returns an Optional<Product>, so we have to wrap mockProduct in Optional.ofNullable
+        // findById only returns an Optional<Product>, so we have to wrap mockProduct in Optional.ofNullable
         Mockito.when(productRepository.findById(1)).thenReturn(Optional.ofNullable(mockProduct));
-        //save the Optional<Product> returned from productService.findById()
+        // save the Optional<Product> returned from productService.findById()
         Optional<Product> returnedProduct = productService.findById(1);
-        //.get() returns the value from the optional, in this case we want it to be our mockProduct.
+        // .get() returns the value from the optional, in this case we want it to be our mockProduct.
         assertTrue(returnedProduct.get().equals(mockProduct));
     }
 
