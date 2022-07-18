@@ -34,7 +34,11 @@ public class ProductService {
     }
 
     public void delete(int id) {
-        productRepository.deleteById(id);
+        if(productRepository.existsById(id)){
+            productRepository.deleteById(id);
+        } else {
+            System.out.println("Product with that ID does not exist.");
+        }
     }
 
     public List<Product> getFeaturedProducts() {
