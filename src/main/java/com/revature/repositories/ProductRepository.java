@@ -10,10 +10,10 @@ import java.util.Optional;
 
 @Transactional
 public interface ProductRepository extends JpaRepository<Product, Integer> {
-    @Query("FROM Product WHERE featured = 'true'")
+    @Query("FROM Product WHERE featured = 'true' and quantity > 0")
     List<Product> getFeaturedProducts();
 
-    @Query("FROM Product WHERE sale > 0")
+    @Query("FROM Product WHERE sale > 0 and quantity > 0")
     List<Product> getProductsOnSale();
 
     @Query("FROM Product WHERE quantity > 0")
