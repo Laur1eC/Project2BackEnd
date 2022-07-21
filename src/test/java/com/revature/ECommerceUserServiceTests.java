@@ -35,5 +35,16 @@ public class ECommerceUserServiceTests {
         this.userService = new UserService(this.userRepository);
     }
 
-    // Tests go here.
+    @Test void whenCredentialsExist_findByCredentialsReturnsUser(){
+        Mockito.when(userRepository.findByEmailAndPassword("example@example.com","password")).thenReturn(Optional.ofNullable(mockUser));
+        Optional<User> returnedUser = userService.findByCredentials("example@example.com","password");
+
+        assertTrue(returnedUser.get().equals(mockUser));
+    }
+
+    @Test void saveUser(){
+        userService.save(mockUser);
+        verify(userRepository).save(mockUser);
+    }
+
 }
